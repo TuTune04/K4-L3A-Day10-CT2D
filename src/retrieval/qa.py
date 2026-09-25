@@ -17,9 +17,18 @@ class AnswerResult:
     retrieved_titles: list[str]
 
 
-def _extract_answer(question: str, top_result: SearchResult) -> str:
+def _shared_categories(results: list[SearchResult]) -> str:
+    """Multi-hop: giao cac linh vuc cua nhung bai duoc nhac ten trong cau hoi."""
+    category_sets = [[item.strip() for item in result.metadata["categories_joined"].split(",") if item.strip()] for result in results]
+    shared = [category for category in category_sets[0] if all(category in others for others in category_sets[1:])]
+    return ", ".join(shared) if shared else "No shared categories found."
+
+
+def _extract_answer(question: str, top_result: SearchResult, named_results: list[SearchResult] | None = None) -> str:
     lowered = question.lower()
     metadata = top_result.metadata
+    if "in common" in lowered and named_results and len(named_results) >= 2:
+        return _shared_categories(named_results)
     if "who authored" in lowered or "list the authors" in lowered:
         return metadata["authors_joined"]
     if "when was" in lowered or "publication date" in lowered or "published on" in lowered:
@@ -30,23 +39,27 @@ def _extract_answer(question: str, top_result: SearchResult) -> str:
 
 
 def answer_question(question: str, settings: Settings, index: LocalEmbeddingIndex, top_k: int | None = None) -> AnswerResult:
-    title_match = re.search(r"'([^']+)'", question)
-    exact = index.lookup(title_match.group(1)) if title_match else None
-    retrieved = index.search(question, top_k=top_k)
-    if exact:
-        exact_result = SearchResult(
+    # Moi title trong dau nhay don duoc tra cuu chinh xac (cau multi-hop co 2 title).
+    exacts = [match for match in (index.lookup(title) for title in re.findall(r"'([^']+)'", question)) if match]
+    named_results = [
+        SearchResult(
             paper_id=exact["paper_id"],
             title=exact["title"],
             score=1.0,
             content=exact["content"],
             metadata=exact["metadata"],
         )
-        deduped = [exact_result] + [item for item in retrieved if item.paper_id != exact_result.paper_id]
+        for exact in exacts
+    ]
+    retrieved = index.search(question, top_k=top_k)
+    if named_results:
+        named_ids = {item.paper_id for item in named_results}
+        deduped = named_results + [item for item in retrieved if item.paper_id not in named_ids]
         retrieved = deduped[: (top_k or settings.top_k)]
     if not retrieved:
         answer = "I don't know from the indexed corpus."
     else:
-        answer = _extract_answer(question, retrieved[0])
+        answer = _extract_answer(question, retrieved[0], named_results)
     return AnswerResult(
         question=question,
         answer=answer,
