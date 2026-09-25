@@ -20,7 +20,7 @@
 | --- | --- | --- | --- | --- |
 | Cấu hình | `src/core/config.py` (`paths.test_set_json`) | Biến môi trường `.env` | `Settings`, `Paths` | Hoàn thành |
 | Baseline pipeline | `src/pipelines/phase1.py` – `main()` | Raw snapshot, settings | `papers_clean.*`, `papers-baseline`, `baseline_metrics.json`, `phase1_report.md` | Hoàn thành |
-| Corruption & repair flow | `src/pipelines/corruption_flow.py` – `main()` | Baseline artifacts, raw records | `corrupted_*`, `repaired_*`, `corruption_report.md` | Hoàn thành |
+| Corruption & self-healing flow | `src/pipelines/corruption_flow.py` – `main()` | Baseline artifacts, raw records | `corrupted_*`, `repaired_*`, `corruption_report.md` | Hoàn thành |
 | Artifacts & báo cáo nhóm | `data/`, `docs/TEAM.md`, `report/group_report.md` | Kết quả 2 pipeline | Artifact đã commit, báo cáo nhóm | Hoàn thành |
 | Bonus B2 + CI (B3) | `src/pipelines/self_heal.py`, `.github/workflows/tests.yml`, `script/run_tests.sh`, `tests/test_pipelines.py` | Dataset + Quality/Freshness | `self_heal_log.json`, CI coverage gate 80% | Hoàn thành |
 
@@ -35,7 +35,7 @@
 | Nhiệm vụ đã thực hiện | File/hàm/artifact liên quan | Kết quả bàn giao | Cách xác minh |
 | --- | --- | --- | --- |
 | Ghép baseline end-to-end, Quality Gate chặn index khi fail | `src/pipelines/phase1.py` | `phase1_report.md`, `baseline_metrics.json` | `python script/run_phase1.py` (exit 0) |
-| Ghép luồng corrupt → evaluate → repair → so sánh 3 trạng thái | `src/pipelines/corruption_flow.py` | `corruption_report.md` | `python script/run_corruption_flow.py` (exit 0) |
+| Ghép luồng corrupt → detect → evaluate → self-heal → so sánh 3 trạng thái | `src/pipelines/corruption_flow.py` | `corruption_report.md` | `python script/run_corruption_flow.py` (exit 0) |
 | Cấu hình LLM Judge openai/gpt-4o-mini, chạy lại và commit artifact | `.env` (không commit), `data/` | `data/results/*_metrics.json` | `judge.reasoning` trong `*_answers.json` |
 
 Nêu một output cụ thể mà phần việc của bạn tạo ra hoặc giúp xác minh:
@@ -60,18 +60,19 @@ _(Tự viết bằng lời của bạn.)_
 | Output                         | Toàn bộ artifact trong `data/` + 2 báo cáo Markdown |
 | Module phụ thuộc             | Mọi module trong `src/` |
 | Module sử dụng output        | Báo cáo nhóm, demo CP6 |
-| Điều kiện lỗi cần xử lý | Quality Gate fail ở baseline → dừng trước khi index; thiếu artifact baseline khi chạy corruption flow → báo lỗi yêu cầu chạy Phase 1 |
+| Điều kiện lỗi cần xử lý | Quality Gate fail ở baseline → dừng trước khi index; thiếu artifact baseline khi chạy corruption flow → báo lỗi yêu cầu chạy Phase 1; self-heal không phục hồi được (rollback và re-fetch đều lỗi) → `RuntimeError` |
 
 ### Cách xác minh
 
 ```bash
 python script/run_phase1.py
 python script/run_corruption_flow.py
+./script/run_tests.sh
 ```
 
-- **Kết quả mong đợi:** Cả 2 lệnh exit 0; repaired giống baseline; 3 collection Chroma.
-- **Kết quả thực tế:** Exit 0. Console in `Repaired rows: 24 | identical to baseline content: True`; Chroma có `papers-baseline` (24), `papers-corrupted` (22), `papers-repaired` (24).
-- **Artifact/log:** `data/reports/phase1_report.md`, `data/reports/corruption_report.md`
+- **Kết quả mong đợi:** Cả 2 lệnh exit 0; self-heal tự kích hoạt trên dữ liệu corrupted; repaired giống baseline; 3 collection Chroma.
+- **Kết quả thực tế:** Exit 0. Console in `Healthy=False -> self-healing will be triggered` và `Triggered=True | strategy=rollback_to_raw_snapshot | healthy after=True`; Chroma có `papers-baseline` (24), `papers-corrupted` (22), `papers-repaired` (24); `./script/run_tests.sh`: 58 passed, coverage 97.6%.
+- **Artifact/log:** `data/reports/phase1_report.md`, `data/reports/corruption_report.md`, `data/results/self_heal_log.json`
 
 ## 5. Một quyết định kỹ thuật quan trọng
 
