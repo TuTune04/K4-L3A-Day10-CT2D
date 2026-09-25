@@ -22,7 +22,7 @@
 
 Nhóm đã hoàn thành đầy đủ 7 tầng của pipeline: ingestion Crossref (chế độ offline snapshot, có live mode với retry), cleaning, Quality Gate bằng Great Expectations 1.23.1, index ChromaDB với `all-MiniLM-L6-v2`, evaluation baseline, bộ 6 kịch bản corruption và idempotent repair. Baseline tạo đủ artifact: 2 file raw, `papers_clean.csv/json` (24 dòng), collection `papers-baseline`, `test_set.json` (10 câu), `baseline_metrics.json` và `phase1_report.md`. Trên dữ liệu sạch, Hit Rate và Token F1 đều đạt 1.0.
 
-Sau khi tiêm lỗi, Hit Rate giảm từ 1.0 xuống 0.8, Token F1 từ 1.0 xuống 0.6979, LLM Judge Accuracy (gpt-4o-mini) từ 1.0 xuống 0.5, và Quality Gate fail 4/8 expectation. Lỗi nguy hiểm nhất là **stale date**: câu eval_008 vẫn truy xuất đúng bài (hit = true) nhưng trả lời sai năm (`2025-05-20` thay vì `2026-05-20`). Đây là silent failure điển hình, retrieval "đúng" mà câu trả lời vẫn sai. **Drop latest records** gây nhiều thiệt hại nhất: 4/10 câu bị giảm điểm (eval_001, eval_002 mất tài liệu đúng; 2 câu multi-hop mất bài thứ 2 trong cặp nên trả lời thừa lĩnh vực). RAG vẫn trả lời mọi câu mà không báo lỗi. Chỉ Quality Gate và Freshness SLA (stale ratio 0.4545 > 0.25) phát hiện ra vấn đề. Repair tái tạo dữ liệu từ raw snapshot và phục hồi 100% các chỉ số. Chạy repair 2 lần cho ra file giống hệt nhau từng byte.
+Sau khi tiêm lỗi, Hit Rate giảm từ 1.0 xuống 0.8, Token F1 từ 1.0 xuống 0.6979, LLM Judge Accuracy (gpt-4o-mini) từ 1.0 xuống 0.6, và Quality Gate fail 4/8 expectation. Lỗi nguy hiểm nhất là **stale date**: câu eval_008 vẫn truy xuất đúng bài (hit = true) nhưng trả lời sai năm (`2021-05-20` thay vì `2026-05-20`). Đây là silent failure điển hình, retrieval "đúng" mà câu trả lời vẫn sai. **Drop latest records** gây nhiều thiệt hại nhất: 4/10 câu bị giảm điểm (eval_001, eval_002 mất tài liệu đúng; 2 câu multi-hop mất bài thứ 2 trong cặp nên trả lời thừa lĩnh vực). RAG vẫn trả lời mọi câu mà không báo lỗi. Chỉ Quality Gate và Freshness SLA (stale ratio 0.4545 > 0.25) phát hiện ra vấn đề. Repair tái tạo dữ liệu từ raw snapshot và phục hồi 100% các chỉ số. Chạy repair 2 lần cho ra file giống hệt nhau từng byte.
 
 Giới hạn còn lại: Ragas không được chạy (cần `RUN_RAGAS=1`), và dữ liệu là snapshot offline 24 bài.
 
@@ -89,8 +89,8 @@ Không có API key thì đặt `LLM_PROVIDER=mock`. Khi đó pipeline vẫn ch�
 
 | Lệnh             | Trạng thái | Thời điểm chạy gần nhất | Bằng chứng |
 | ----------------- | ---------- | ----------------------------- | ---------- |
-| Baseline pipeline | Thành công (exit 0) | 2026-09-25 08:22 UTC | `data/reports/phase1_report.md`, `data/results/baseline_metrics.json` |
-| Corruption flow   | Thành công (exit 0) | 2026-09-25 08:23 UTC | `data/reports/corruption_report.md`, `data/results/*_metrics.json` |
+| Baseline pipeline | Thành công (exit 0) | 2026-09-25 08:33 UTC | `data/reports/phase1_report.md`, `data/results/baseline_metrics.json` |
+| Corruption flow   | Thành công (exit 0) | 2026-09-25 08:36 UTC | `data/reports/corruption_report.md`, `data/results/*_metrics.json` |
 
 ## 5. Ingestion, cleaning và data contract
 
@@ -200,7 +200,7 @@ Câu **multi_hop** hỏi lĩnh vực chung của 2 bài thuộc 2 chủ đề kh
 | blank_summary | `summary = ""` | 3 | Độ dài summary fail | GX summary fail (4 dòng tính cả duplicate); trúng bài của eval_008 (câu hỏi date) | Clean lại từ raw |
 | inject_noise | Chèn token rác, xáo ký tự | 3 | Khó bắt bằng rule | GX không bắt trực tiếp. Trúng bài của eval_005/eval_009 nhưng 2 câu này hỏi categories nên metric không đổi | Clean lại từ raw |
 | truncate_title | Cắt title còn 7 ký tự | 3 | Độ dài title fail | GX title fail (4 dòng, tính cả 1 dòng duplicate); không trúng bài nào trong test set | Clean lại từ raw |
-| stale_date | `published` − 365 ngày | 7 | Freshness fail | stale ratio 0.4545, GX `age_days` fail; eval_008 hit đúng nhưng trả lời `2025-05-20` (F1 0) | Clean lại từ raw |
+| stale_date | `published` lùi 5 năm | 7 | Freshness fail | stale ratio 0.4545, GX `age_days` fail; eval_008 hit đúng nhưng trả lời `2021-05-20` (F1 0) | Clean lại từ raw |
 | duplicate_rows | Nhân đôi dòng | 3 | Unique fail | GX unique `paper_id` fail (6 dòng) | Dedup trong cleaning |
 
 Corruption log:
@@ -217,12 +217,12 @@ Repair không sửa trên bảng đã hỏng. Nó đọc lại `data/raw/crossre
 | ------------------------ | -------: | --------: | -------: | -----------------------: | --------------: | ------------ |
 | `retrieval_hit_rate`   | 1.0000 | 0.8000 | 1.0000 | −0.2000 | 100% | 2 câu mất tài liệu đúng (eval_001 summary, eval_002 authors) |
 | `mean_token_f1`        | 1.0000 | 0.6979 | 1.0000 | −0.3021 | 100% | 5/10 câu bị giảm: 4 do drop latest, 1 do stale date |
-| `judge_accuracy`       | 1.0000 | 0.5000 | 1.0000 | −0.5000 | 100% | gpt-4o-mini đánh sai 5/10 câu |
-| `mean_judge_score`     | 5.0000 | 3.8000 | 5.0000 | −1.2000 | 100% | |
+| `judge_accuracy`       | 1.0000 | 0.6000 | 1.0000 | −0.4000 | 100% | gpt-4o-mini đánh sai 4/10 câu (eval_005 thiếu chính xác nhưng vẫn được chấm đúng) |
+| `mean_judge_score`     | 5.0000 | 3.7000 | 5.0000 | −1.3000 | 100% | |
 | Quality checks pass/fail | 8/8 Pass | 4/8 Fail | 8/8 Pass | −4 | 100% | Fail: unique, title, summary, age_days |
 | Freshness status         | Fresh (0.0417) | Stale (0.4545) | Fresh (0.0417) | +0.4128 stale ratio | 100% | |
 
-1. **Stale date** → stale ratio tăng 0.0417 → 0.4545 (`is_fresh=False`, GX `age_days` fail) → eval_008 vẫn truy xuất đúng bài (hit = true) nhưng trả lời sai năm, F1 1.0 → 0.0, judge 2/5. Hit Rate không bắt được loại lỗi này, chỉ freshness monitor bắt được.
+1. **Stale date** → stale ratio tăng 0.0417 → 0.4545 (`is_fresh=False`, GX `age_days` fail) → eval_008 vẫn truy xuất đúng bài (hit = true) nhưng trả lời sai năm, F1 1.0 → 0.0, judge 1/5. Hit Rate không bắt được loại lỗi này, chỉ freshness monitor bắt được.
 2. **Drop latest records** → latest lùi về 2026-06-12 (freshness) → eval_001, eval_002 mất tài liệu đúng (hit fail); 2 câu multi_hop chỉ tra cứu được 1/2 bài nên trả lời bằng toàn bộ categories của bài còn lại (F1 0.67 / 0.57). **Repair từ raw** → 8/8 expectation pass, freshness về 0.0417 → mọi metric về lại 1.0.
 
 Inject noise và truncate title có trong dữ liệu corrupted, nhưng không làm thay đổi metric: các bài bị trúng lỗi không có câu hỏi summary/title trong test set. Tức là **test set 10 câu không đủ phủ mọi loại lỗi**, và Quality Gate vẫn là tín hiệu cần thiết. Inject noise còn không bị GX bắt trực tiếp (summary sau khi chèn nhiễu vẫn ≥ 30 ký tự).
@@ -232,7 +232,7 @@ Inject noise và truncate title có trong dữ liệu corrupted, nhưng không l
 - **Triệu chứng:** lần chạy đầu với `LLM_PROVIDER=mock`, `judge_accuracy` và `mean_judge_score` vẫn có giá trị và biến động theo trạng thái, trông như có một LLM judge đang chấm thật.
 - **Nguyên nhân:** mô hình mock (`FakeListChatModel`) không hỗ trợ `with_structured_output`. `_judge_answer` bắt exception và chuyển sang heuristic theo Token F1. Mọi câu trả lời đều có `reasoning = "Fallback heuristic judge used..."`.
 - **Cách xử lý:** cấu hình `LLM_PROVIDER=openai`, `LLM_MODEL=gpt-4o-mini` trong `.env` (không commit) rồi chạy lại cả 2 pipeline.
-- **Cách xác minh:** trường `judge.reasoning` trong `data/results/*_answers.json` giờ là nhận xét do LLM viết. Với dữ liệu corrupted, judge đánh sai 5/10 câu, trong khi heuristic trước đó chỉ đánh sai 3/10.
+- **Cách xác minh:** trường `judge.reasoning` trong `data/results/*_answers.json` giờ là nhận xét do LLM viết. Với dữ liệu corrupted, judge đánh sai 4/10 câu, trong khi heuristic trước đó chỉ đánh sai 3/10.
 
 ## 12. Giới hạn và hướng cải thiện
 

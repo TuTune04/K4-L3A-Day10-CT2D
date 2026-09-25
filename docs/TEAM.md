@@ -53,7 +53,7 @@
 - **Công việc chi tiết đã hoàn thành:**
   - `src/evaluation/testset.py`: bộ 10 câu hỏi, 5 dạng (summary, authors, date, categories, multi_hop) × 2, chọn trải đều theo thời gian xuất bản; `load_or_create_test_set` giữ test set cố định.
   - `src/retrieval/index.py`: `build_from_clean()` và `semantic_search()` cho smoke test ChromaDB; `src/retrieval/qa.py`: trả lời câu multi-hop bằng cách tra cứu 2 bài và lấy giao lĩnh vực.
-  - `src/ingestion/corruption.py`: 6 kịch bản lỗi có seed cố định (drop latest 20%, blank summary, inject noise, truncate title, stale date −365 ngày, duplicate rows) và `corruption_log.json`.
+  - `src/ingestion/corruption.py`: 6 kịch bản lỗi có seed cố định (drop latest 20%, blank summary, inject noise, truncate title, stale date lùi 5 năm, duplicate rows) và `corruption_log.json`.
 - **Điều học được / Đóng góp chính:**
   - _(Tự điền)_
 
