@@ -58,19 +58,20 @@ _(Tự viết bằng lời của bạn.)_
 | Input                          | DataFrame sạch (schema của cleaning); câu hỏi dạng `'<title>'` |
 | Output                         | `test_set.json` (`id, type, question_type, question, ground_truth, ground_truth_doc_ids`); DataFrame corrupted + log |
 | Module phụ thuộc             | `ingestion/cleaning.py` (`refresh_derived_columns`), `core/` |
-| Module sử dụng output        | `evaluation/metrics.py`, `pipelines/phase1.py`, `pipelines/corruption_flow.py` |
+| Module sử dụng output        | `evaluation/metrics.py`, `pipelines/phase1.py`, `pipelines/corruption_flow.py`, `retrieval/agent.py` |
 | Điều kiện lỗi cần xử lý | Ít hơn 10 tài liệu; title chứa dấu `'`; không tìm được bài ghép multi_hop; collection chưa tồn tại |
 
 ### Cách xác minh
 
 ```bash
+pytest tests/test_evaluation_retrieval.py
 python -c "from core.config import load_settings; from evaluation.testset import load_or_create_test_set; import pandas as pd; s=load_settings(); df=pd.read_json(s.paths.clean_json); ts=load_or_create_test_set(df, s.paths.test_set_json); print(f'Test set gồm {len(ts.samples)} câu hỏi')"
 python -c "from core.config import load_settings; from retrieval.index import LocalEmbeddingIndex; s=load_settings(); idx=LocalEmbeddingIndex(s, collection_name='papers-baseline'); idx.build_from_clean(); res=idx.semantic_search('machine learning', top_k=2); print(f'Tìm thấy {len(res)} tài liệu liên quan')"
 python -c "from core.config import load_settings; from ingestion.corruption import corrupt_clean_dataframe; import pandas as pd; s=load_settings(); df=pd.read_json(s.paths.clean_json); c=corrupt_clean_dataframe(df, s.paths.corruption_log); print(f'Corrupted {len(c)} dòng')"
 ```
 
 - **Kết quả mong đợi:** 10 câu hỏi; 2 tài liệu; log ghi đủ 6 loại lỗi.
-- **Kết quả thực tế:** `Test set gồm 10 câu hỏi`, `Tìm thấy 2 tài liệu liên quan`, `Corrupted 22 dòng` (24 − 5 dropped + 3 duplicate).
+- **Kết quả thực tế:** `tests/test_evaluation_retrieval.py` 13 passed; `Test set gồm 10 câu hỏi`, `Tìm thấy 2 tài liệu liên quan`, `Corrupted 22 dòng` (24 − 5 dropped + 3 duplicate).
 - **Artifact/log:** `data/eval/test_set.json`, `data/results/corruption_log.json`
 
 ## 5. Một quyết định kỹ thuật quan trọng
