@@ -7,6 +7,7 @@ from evaluation.testset import load_or_create_test_set
 from ingestion.cleaning import build_clean_dataframe
 from ingestion.crossref import fetch_source_records
 from observability.quality import build_freshness_report, run_data_quality_checks
+from observability.dashboard import build_dashboard
 from observability.reporting import generate_phase1_report
 from retrieval.index import LocalEmbeddingIndex
 from retrieval.qa import answer_question
@@ -80,3 +81,4 @@ def main() -> None:
     }
     generate_phase1_report(paths.baseline_report, source_summary, bundle.summary, quality, freshness, bundle.answers)
     print(f"Report -> {paths.baseline_report}")
+    print(f"Dashboard -> {build_dashboard(settings)}")

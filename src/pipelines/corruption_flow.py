@@ -3,13 +3,12 @@ from __future__ import annotations
 import pandas as pd
 
 from core.config import load_settings
-from core.utils import now_utc, read_json, write_csv, write_json
+from core.utils import read_json, write_csv, write_json
 from evaluation.metrics import evaluate_pipeline
-from ingestion.cleaning import build_clean_dataframe
 from ingestion.corruption import corrupt_clean_dataframe
-from ingestion.crossref import load_raw_records
-from observability.quality import build_freshness_report, run_data_quality_checks
+from observability.dashboard import build_dashboard
 from observability.reporting import generate_corruption_report
+from pipelines.self_heal import assess_health, self_heal
 from retrieval.index import LocalEmbeddingIndex
 
 METRIC_KEYS = ("retrieval_hit_rate", "mean_token_f1", "judge_accuracy", "mean_judge_score")
@@ -48,29 +47,37 @@ def main() -> None:
     for event in corruption_log["corruptions"]:
         print(f"  {event['corruption']}: {event['affected_rows']} rows")
 
-    _step("3. Observability on corrupted data (audit mode - gate reports but does not block)")
-    corrupted_quality = run_data_quality_checks(corrupted_df, settings, "corrupted")
-    corrupted_freshness = build_freshness_report(corrupted_df, settings, paths.quality_dir / "freshness_report_corrupted.json")
+    _step("3. Detect: Quality Gate + Freshness on corrupted data (audit mode - index anyway to measure impact)")
+    health = assess_health(corrupted_df, settings, "corrupted", paths.quality_dir / "freshness_report_corrupted.json")
+    corrupted_quality, corrupted_freshness = health.quality, health.freshness
     print(f"  Quality success={corrupted_quality['success']} | failed={corrupted_quality['failed_expectations']}")
     print(f"  Freshness is_fresh={corrupted_freshness['is_fresh']} | stale ratio={corrupted_freshness['stale_ratio']}")
+    print(f"  Healthy={health.healthy} -> self-healing {'will be triggered' if not health.healthy else 'not needed'}")
 
     _step("4. Re-index & evaluate corrupted data")
     corrupted_index = LocalEmbeddingIndex.build(corrupted_df, settings, paths.corrupted_embeddings_json)
     corrupted = evaluate_pipeline(settings, corrupted_index, paths.eval_testset, paths.corrupted_metrics, paths.corrupted_answers)
 
-    _step("5. Idempotent repair from raw snapshot")
-    # Khong va lai bang hong: tai tao tu raw records + cung run_date logic -> ket qua xac dinh.
-    repaired_df = build_clean_dataframe(load_raw_records(paths.raw_records_json), now_utc())
+    _step("5. Self-healing: auto repair triggered by the failed checks")
+    # Khong va lai bang hong: rollback ve raw snapshot (deterministic -> idempotent), re-fetch neu van loi.
+    heal = self_heal(
+        corrupted_df,
+        settings,
+        "corrupted",
+        paths.quality_dir / "freshness_report_corrupted.json",
+        healed_name="repaired",
+        healed_freshness_path=paths.quality_dir / "freshness_report_repaired.json",
+        before=health,
+    )
+    repaired_df = heal.df
+    print(f"  Triggered={heal.triggered} | strategy={heal.strategy} | healthy after={heal.after.healthy} -> {paths.self_heal_log}")
     _save_dataset(repaired_df, paths.repaired_clean_csv, paths.repaired_clean_json)
     same_as_baseline = repaired_df["paper_id"].tolist() == clean_df["paper_id"].tolist() and (
         repaired_df["text_for_embedding"].tolist() == clean_df["text_for_embedding"].tolist()
     )
     print(f"  Repaired rows: {len(repaired_df)} | identical to baseline content: {same_as_baseline}")
 
-    repaired_quality = run_data_quality_checks(repaired_df, settings, "repaired")
-    repaired_freshness = build_freshness_report(repaired_df, settings, paths.quality_dir / "freshness_report_repaired.json")
-    if not repaired_quality["success"]:
-        raise RuntimeError(f"Repair failed the Quality Gate: {repaired_quality['failed_expectations']}")
+    repaired_quality, repaired_freshness = heal.after.quality, heal.after.freshness
 
     _step("6. Re-index & evaluate repaired data")
     repaired_index = LocalEmbeddingIndex.build(repaired_df, settings, paths.repaired_embeddings_json)
@@ -96,3 +103,4 @@ def main() -> None:
         baseline_freshness=baseline_freshness,
     )
     print(f"\nReport -> {paths.comparison_report}")
+    print(f"Dashboard -> {build_dashboard(settings)}")
