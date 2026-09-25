@@ -203,9 +203,11 @@ def generate_corruption_report(
         "\n".join(_analysis(baseline_metrics, corrupted_metrics, repaired_metrics, corrupted_quality, repaired_quality,
                             corrupted_freshness, repaired_freshness)),
         "## 6. Repair Strategy",
-        "Repair does not patch the corrupted table. It re-runs the deterministic cleaning step from the preserved raw "
-        "snapshot (`data/raw/crossref_records.json`) and rebuilds a fresh Chroma collection (`papers-repaired`). "
-        "Because the input and transformation are both deterministic, running repair any number of times yields the same "
-        "clean dataset (idempotent), with no manual edits.",
+        "Repair is triggered automatically by `pipelines/self_heal.py` when the Quality Gate or the Freshness SLA fails "
+        "(decisions logged in `data/results/self_heal_log.json`). It does not patch the corrupted table: it first rolls "
+        "back to the preserved raw snapshot (`data/raw/crossref_records.json`) and re-runs the deterministic cleaning step, "
+        "and only re-fetches from Crossref if the dataset is still unhealthy. The result is re-validated and indexed into a "
+        "fresh Chroma collection (`papers-repaired`). Because input and transformation are deterministic, running repair any "
+        "number of times yields the same clean dataset (idempotent), with no manual edits.",
     ]
     write_text(report_path, "\n\n".join(sections) + "\n")
