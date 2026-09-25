@@ -39,7 +39,9 @@
   - Xây dựng `src/pipelines/corruption_flow.py`: corrupt → audit quality/freshness → re-index & evaluate → idempotent repair từ `data/raw/crossref_records.json` → so sánh 3 trạng thái trên cùng test set.
   - Cấu hình LLM Judge `openai / gpt-4o-mini`, chạy lại toàn bộ pipeline, commit artifacts trong `data/`, viết `report/group_report.md`.
 - **Điều học được / Đóng góp chính:**
-  - _(Tự điền)_
+  - **Lỗi dữ liệu là silent failure.** Agent vẫn trả lời trôi chảy trên dữ liệu hỏng, nên phải có gate chặn trước khi index và có metric so sánh với baseline, không thể chờ hệ thống tự báo lỗi.
+  - **Raw preservation là nền tảng của repair idempotent.** Giữ nguyên bản raw và mọi bước sau đều là hàm tất định từ raw thì phục hồi chỉ là chạy lại, không cần sửa tay từng lỗi.
+  - **Phải kiểm chứng cách một metric được tính, không chỉ đọc con số.** Judge chạy heuristic khi dùng mock nhưng vẫn cho số trông hợp lý. Nếu không đọc `reasoning` thì nhóm đã báo cáo sai bản chất của metric.
 
 ### ## ViHungDuc-2A202602512
 - **Vai trò:** Phụ trách Ingestion & Làm sạch dữ liệu.
@@ -47,7 +49,9 @@
   - `src/ingestion/crossref.py`: parse Crossref payload (DOI, title, abstract JATS, authors, subject, dates, URL), gọi API có retry/backoff cho 429/5xx, fallback snapshot offline, lưu 2 raw artifacts.
   - `src/ingestion/cleaning.py`: bỏ tag JATS/HTML, chuẩn hóa khoảng trắng, tính `age_days`, khử trùng theo `paper_id`, sinh `text_for_embedding` 5 phần.
 - **Điều học được / Đóng góp chính:**
-  - _(Tự điền)_
+  - Giữ bản raw nguyên vẹn là "bảo hiểm" cho cả pipeline. Nhờ đó repair chỉ cần chạy lại thay vì sửa tay.
+  - API bên ngoài luôn có thể lỗi hoặc trả dữ liệu thiếu. Ingestion phải có retry, fallback và đọc dữ liệu phòng thủ.
+  - Cleaning nên là hàm tất định, chỉ phụ thuộc vào đầu vào và `run_date`, để kết quả tái lập được và dễ test.
 
 ### ## LePhanVietCuong-2A202602641
 - **Vai trò:** Phụ trách Evaluation Set & Data Corruption.
@@ -56,7 +60,9 @@
   - `src/retrieval/index.py`: `build_from_clean()` và `semantic_search()` cho smoke test ChromaDB; `src/retrieval/qa.py`: trả lời câu multi-hop bằng cách tra cứu 2 bài và lấy giao lĩnh vực.
   - `src/ingestion/corruption.py`: 6 kịch bản lỗi có seed cố định (drop latest 20%, blank summary, inject noise, truncate title, stale date lùi 5 năm, duplicate rows) và `corruption_log.json`.
 - **Điều học được / Đóng góp chính:**
-  - _(Tự điền)_
+  - Một bộ đánh giá chỉ đo được những gì nó bao phủ. Test set 10 câu không trúng bài bị tiêm noise thì không thể kết luận noise vô hại.
+  - Tính tái lập (seed cố định, test set dùng lại, log chi tiết) quan trọng ngang tính đúng. Không tái lập được thì không so sánh và không giải thích được kết quả.
+  - Cần tách đánh giá retrieval và đánh giá câu trả lời để biết pipeline hỏng ở tầng nào.
 
 ### ## NguyenQuangDuy-2A202602426
 - **Vai trò:** Phụ trách Data Observability & Reporting.
@@ -64,4 +70,6 @@
   - `src/observability/quality.py`: Quality Gate bằng Great Expectations 1.x (row count, not null, unique `paper_id`, độ dài `summary`, độ dài `title`, freshness `age_days`) và Freshness SLA (`age_days > 180`, ngưỡng 25%).
   - `src/observability/reporting.py`: `phase1_report.md` và `corruption_report.md` đối chiếu Baseline / Corrupted / Repaired, phân tích theo question type.
 - **Điều học được / Đóng góp chính:**
-  - _(Tự điền)_
+  - Một bộ expectation pass không có nghĩa dữ liệu đúng. Nó chỉ nghĩa là dữ liệu không vi phạm những gì mình đã nghĩ tới trước. Cần biết rõ expectation của mình không bắt được gì.
+  - Kiểm tra cấp bản ghi (quality) và cấp tập dữ liệu (freshness) phải đi cùng nhau, vì có loại lỗi chỉ lộ ra ở một trong hai cấp.
+  - Báo cáo và dashboard là một phần của observability. Con số đúng nhưng trình bày khó đọc thì người vận hành vẫn bỏ sót cảnh báo.
