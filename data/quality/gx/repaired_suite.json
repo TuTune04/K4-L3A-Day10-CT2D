@@ -1,0 +1,88 @@
+{
+  "name": "papers_repaired_suite",
+  "id": "9085eeda-5343-4179-8519-dd95292d9ae6",
+  "expectations": [
+    {
+      "type": "expect_table_row_count_to_be_between",
+      "kwargs": {
+        "min_value": 5,
+        "max_value": 5000
+      },
+      "meta": {},
+      "id": "01f00646-5fe0-4811-865e-9e048e1cb0f3",
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "paper_id"
+      },
+      "meta": {},
+      "id": "dadc024e-feb2-45f1-97e7-dd721e09bf4a",
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "title"
+      },
+      "meta": {},
+      "id": "a8a192a6-8443-406e-a942-12ffe8ac713e",
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "text_for_embedding"
+      },
+      "meta": {},
+      "id": "da1709c5-b0dd-460c-a7fe-faff9753a1e8",
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_unique",
+      "kwargs": {
+        "column": "paper_id"
+      },
+      "meta": {},
+      "id": "d9ac49e2-3811-4fb9-8020-94e147a125ff",
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_value_lengths_to_be_between",
+      "kwargs": {
+        "column": "summary",
+        "min_value": 30
+      },
+      "meta": {},
+      "id": "1676e79c-446b-48fe-8b44-15679e5c285e",
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_value_lengths_to_be_between",
+      "kwargs": {
+        "column": "title",
+        "min_value": 8
+      },
+      "meta": {},
+      "id": "5489ee4c-2ace-4ba9-9e5a-d28fb722edb4",
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "age_days",
+        "mostly": 0.75,
+        "min_value": 0.0,
+        "max_value": 180.0
+      },
+      "meta": {},
+      "id": "d527d640-910c-44cc-a7dc-7bc28822397d",
+      "severity": "critical"
+    }
+  ],
+  "meta": {
+    "great_expectations_version": "1.23.1"
+  },
+  "notes": null
+}

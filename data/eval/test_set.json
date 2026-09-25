@@ -1,0 +1,104 @@
+[
+  {
+    "id": "eval_001",
+    "type": "summary",
+    "question_type": "summary",
+    "question": "What is the summary of the paper 'Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines'?",
+    "ground_truth": "Static benchmarks fail to capture domain drift in enterprise knowledge bases.",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671812"
+    ]
+  },
+  {
+    "id": "eval_002",
+    "type": "authors",
+    "question_type": "authors",
+    "question": "Who authored the paper 'Synthetic Corruption Testing: Stress-Testing Vector Search Robustness'?",
+    "ground_truth": "Kien Duong, Vy Ly",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671807"
+    ]
+  },
+  {
+    "id": "eval_003",
+    "type": "date",
+    "question_type": "date",
+    "question": "When was the paper 'Advanced Perspectives on Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines' published?",
+    "ground_truth": "2026-06-12",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671824"
+    ]
+  },
+  {
+    "id": "eval_004",
+    "type": "categories",
+    "question_type": "categories",
+    "question": "What categories does the paper 'Advanced Perspectives on Chunking Strategies for Technical Documentation Retrieval' belong to?",
+    "ground_truth": "Information Retrieval, Natural Language Processing",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671821"
+    ]
+  },
+  {
+    "id": "eval_005",
+    "type": "multi_hop",
+    "question_type": "multi_hop",
+    "question": "What categories do the papers 'Advanced Perspectives on Multi-Agent Consensus for High-Stakes Fact Verification' and 'Freshness SLAs for Real-Time LLM Knowledge Augmentation' have in common?",
+    "ground_truth": "Artificial Intelligence",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671820",
+      "10.1145/3637528.3671804"
+    ]
+  },
+  {
+    "id": "eval_006",
+    "type": "summary",
+    "question_type": "summary",
+    "question": "What is the summary of the paper 'Advanced Perspectives on Evaluating Retrieval Precision with Token F1 and LLM Judges'?",
+    "ground_truth": "An extended empirical study on valuating open-domain QA requires robust metrics.",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671817"
+    ]
+  },
+  {
+    "id": "eval_007",
+    "type": "authors",
+    "question_type": "authors",
+    "question": "Who authored the paper 'Advanced Perspectives on Mitigating Ghost Vectors in Dense Retrieval via Idempotent Indexing'?",
+    "ground_truth": "Duc Vu, Thao Dang",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671815"
+    ]
+  },
+  {
+    "id": "eval_008",
+    "type": "date",
+    "question_type": "date",
+    "question": "When was the paper 'Agentic Retrieval-Augmented Generation for Knowledge-Intensive Tasks' published?",
+    "ground_truth": "2026-05-20",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671801"
+    ]
+  },
+  {
+    "id": "eval_009",
+    "type": "categories",
+    "question_type": "categories",
+    "question": "What categories does the paper 'Semantic Layer Integration for Agentic Text-to-SQL Pipelines' belong to?",
+    "ground_truth": "Databases, Information Systems",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671806"
+    ]
+  },
+  {
+    "id": "eval_010",
+    "type": "multi_hop",
+    "question_type": "multi_hop",
+    "question": "What categories do the papers 'Evaluating Retrieval Precision with Token F1 and LLM Judges' and 'Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines' have in common?",
+    "ground_truth": "Evaluation Methodology",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671805",
+      "10.1145/3637528.3671812"
+    ]
+  }
+]

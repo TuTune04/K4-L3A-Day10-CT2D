@@ -1,0 +1,32 @@
+[
+  {
+    "question": "What is the summary of the paper 'Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines'?",
+    "answer": "Static benchmarks fail to capture domain drift in enterprise knowledge bases.",
+    "retrieved_titles": [
+      "Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines",
+      "Advanced Perspectives on Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines",
+      "Advanced Perspectives on Evaluating Retrieval Precision with Token F1 and LLM Judges",
+      "Evaluating Retrieval Precision with Token F1 and LLM Judges"
+    ]
+  },
+  {
+    "question": "Who authored the paper 'Synthetic Corruption Testing: Stress-Testing Vector Search Robustness'?",
+    "answer": "Kien Duong, Vy Ly",
+    "retrieved_titles": [
+      "Synthetic Corruption Testing: Stress-Testing Vector Search Robustness",
+      "Advanced Perspectives on Synthetic Corruption Testing: Stress-Testing Vector Search Robustness",
+      "Advanced Perspectives on Data Observability and Quality Gates for Production RAG Systems",
+      "Data Observability and Quality Gates for Production RAG Systems"
+    ]
+  },
+  {
+    "question": "When was the paper 'Advanced Perspectives on Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines' published?",
+    "answer": "2026-06-12",
+    "retrieved_titles": [
+      "Advanced Perspectives on Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines",
+      "Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines",
+      "Advanced Perspectives on Evaluating Retrieval Precision with Token F1 and LLM Judges",
+      "Advanced Perspectives on Automated Data Quality Profiling with Great Expectations in CI/CD"
+    ]
+  }
+]
