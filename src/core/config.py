@@ -25,6 +25,7 @@ class Paths:
     repaired_clean_json: Path
     repaired_embeddings_json: Path
     eval_testset: Path
+    test_set_json: Path
     baseline_metrics: Path
     baseline_answers: Path
     demo_answers: Path
@@ -95,6 +96,7 @@ def load_settings(project_dir: Path | None = None) -> Settings:
         repaired_clean_json=data_dir / "clean" / "papers_clean_repaired.json",
         repaired_embeddings_json=data_dir / "embeddings" / "papers_embeddings_repaired.json",
         eval_testset=data_dir / "eval" / "test_set.json",
+        test_set_json=data_dir / "eval" / "test_set.json",
         baseline_metrics=data_dir / "results" / "baseline_metrics.json",
         baseline_answers=data_dir / "results" / "baseline_answers.json",
         demo_answers=data_dir / "results" / "agent_demo_answers.json",
