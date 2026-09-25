@@ -25,6 +25,7 @@
 | CP3 – Baseline End-to-End | `phase1.py`, chạy baseline | Hỗ trợ debug dữ liệu | Kiểm tra Hit Rate / Token F1 | `generate_phase1_report` |
 | CP4 – Corruption | `corruption_flow.py` | – | `corrupt_clean_dataframe` (6 lỗi) | Kiểm tra Quality Gate bắt lỗi |
 | CP5 – Repair & Report | Idempotent repair, chạy lại toàn bộ | Xác nhận repair tái tạo từ raw | Phân tích suy giảm theo question type | `generate_corruption_report` (3 trạng thái) |
+| Bonus B1/B2/B3 | Self-healing `pipelines/self_heal.py`, CI GitHub Actions, `tests/test_pipelines.py` | `tests/test_ingestion.py` | `tests/test_evaluation_retrieval.py` | Dashboard `observability/dashboard.py`, `tests/test_observability.py` |
 | CP6 – Demo & Nộp bài | Demo, TEAM.md, `group_report.md` | Báo cáo cá nhân + nộp LMS | Báo cáo cá nhân + nộp LMS | Báo cáo cá nhân + nộp LMS |
 
 ---

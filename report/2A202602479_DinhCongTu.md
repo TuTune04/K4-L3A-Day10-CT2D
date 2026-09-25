@@ -22,6 +22,7 @@
 | Baseline pipeline | `src/pipelines/phase1.py` – `main()` | Raw snapshot, settings | `papers_clean.*`, `papers-baseline`, `baseline_metrics.json`, `phase1_report.md` | Hoàn thành |
 | Corruption & repair flow | `src/pipelines/corruption_flow.py` – `main()` | Baseline artifacts, raw records | `corrupted_*`, `repaired_*`, `corruption_report.md` | Hoàn thành |
 | Artifacts & báo cáo nhóm | `data/`, `docs/TEAM.md`, `report/group_report.md` | Kết quả 2 pipeline | Artifact đã commit, báo cáo nhóm | Hoàn thành |
+| Bonus B2 + CI (B3) | `src/pipelines/self_heal.py`, `.github/workflows/tests.yml`, `script/run_tests.sh`, `tests/test_pipelines.py` | Dataset + Quality/Freshness | `self_heal_log.json`, CI coverage gate 80% | Hoàn thành |
 
 ### Việc hỗ trợ ngoài phạm vi chính
 

@@ -78,9 +78,11 @@ python -m pip install -e .
 ### Lệnh chạy
 
 ```bash
+./script/run_tests.sh                  # 58 test pytest, coverage gate 80% (LLM mock)
 cp .env.example .env   # điền LLM_PROVIDER=openai, LLM_MODEL=gpt-4o-mini, OPENAI_API_KEY=<key>
 python script/run_phase1.py
 python script/run_corruption_flow.py
+python script/build_dashboard.py       # (tùy chọn) dựng lại dashboard từ artifact hiện có
 ```
 
 Không có API key thì đặt `LLM_PROVIDER=mock`. Khi đó pipeline vẫn chạy, nhưng Judge chuyển sang heuristic theo Token F1.
@@ -89,8 +91,8 @@ Không có API key thì đặt `LLM_PROVIDER=mock`. Khi đó pipeline vẫn ch�
 
 | Lệnh             | Trạng thái | Thời điểm chạy gần nhất | Bằng chứng |
 | ----------------- | ---------- | ----------------------------- | ---------- |
-| Baseline pipeline | Thành công (exit 0) | 2026-09-25 08:33 UTC | `data/reports/phase1_report.md`, `data/results/baseline_metrics.json` |
-| Corruption flow   | Thành công (exit 0) | 2026-09-25 08:36 UTC | `data/reports/corruption_report.md`, `data/results/*_metrics.json` |
+| Baseline pipeline | Thành công (exit 0) | 2026-09-25 08:56 UTC | `data/reports/phase1_report.md`, `data/results/baseline_metrics.json` |
+| Corruption flow   | Thành công (exit 0) | 2026-09-25 08:56 UTC | `data/reports/corruption_report.md`, `data/results/*_metrics.json` |
 
 ## 5. Ingestion, cleaning và data contract
 
@@ -217,7 +219,7 @@ Repair không sửa trên bảng đã hỏng. Nó đọc lại `data/raw/crossre
 | ------------------------ | -------: | --------: | -------: | -----------------------: | --------------: | ------------ |
 | `retrieval_hit_rate`   | 1.0000 | 0.8000 | 1.0000 | −0.2000 | 100% | 2 câu mất tài liệu đúng (eval_001 summary, eval_002 authors) |
 | `mean_token_f1`        | 1.0000 | 0.6979 | 1.0000 | −0.3021 | 100% | 5/10 câu bị giảm: 4 do drop latest, 1 do stale date |
-| `judge_accuracy`       | 1.0000 | 0.6000 | 1.0000 | −0.4000 | 100% | gpt-4o-mini đánh sai 4/10 câu (eval_005 thiếu chính xác nhưng vẫn được chấm đúng) |
+| `judge_accuracy`       | 1.0000 | 0.6000 | 1.0000 | −0.4000 | 100% | gpt-4o-mini đánh sai 4/10 câu. Qua các lần chạy lại, giá trị dao động 0.5–0.6 do eval_005 (trả lời thừa 1 lĩnh vực) lúc được chấm đúng, lúc sai |
 | `mean_judge_score`     | 5.0000 | 3.7000 | 5.0000 | −1.3000 | 100% | |
 | Quality checks pass/fail | 8/8 Pass | 4/8 Fail | 8/8 Pass | −4 | 100% | Fail: unique, title, summary, age_days |
 | Freshness status         | Fresh (0.0417) | Stale (0.4545) | Fresh (0.0417) | +0.4128 stale ratio | 100% | |
@@ -234,7 +236,15 @@ Inject noise và truncate title có trong dữ liệu corrupted, nhưng không l
 - **Cách xử lý:** cấu hình `LLM_PROVIDER=openai`, `LLM_MODEL=gpt-4o-mini` trong `.env` (không commit) rồi chạy lại cả 2 pipeline.
 - **Cách xác minh:** trường `judge.reasoning` trong `data/results/*_answers.json` giờ là nhận xét do LLM viết. Với dữ liệu corrupted, judge đánh sai 4/10 câu, trong khi heuristic trước đó chỉ đánh sai 3/10.
 
-## 12. Giới hạn và hướng cải thiện
+## 12. Phần bonus
+
+| Bonus | Triển khai | Bằng chứng |
+| --- | --- | --- |
+| **B1 – Observability Dashboard / Drift Monitor** | `src/observability/dashboard.py` sinh `data/reports/dashboard.html`, một file HTML tự chứa, không cần server. Dashboard có: tile Quality Gate / Freshness / stale ratio cho 3 trạng thái; danh sách cảnh báo drift so với baseline (`detect_drift`: gate fail, SLA vi phạm, bài mới nhất bị lùi, số dòng thay đổi); biểu đồ metrics 3 trạng thái kèm bảng số; histogram `age_days` với vùng stale > 180 ngày; ma trận kết quả 8 expectation GX; log corruption và log self-healing. Hai pipeline tự dựng lại dashboard ở bước cuối. | `data/reports/dashboard.html`, `python script/build_dashboard.py` |
+| **B2 – Automated Self-Healing** | `src/pipelines/self_heal.py`: `assess_health()` chạy Quality Gate + Freshness SLA. Chỉ khi unhealthy, `self_heal()` mới tự kích hoạt: (1) rollback về raw snapshot và clean lại, (2) nếu vẫn lỗi thì re-fetch từ Crossref, (3) kiểm định lại. Nếu không phục hồi được thì dừng pipeline bằng `RuntimeError`. Dữ liệu healthy thì không làm gì. Mọi quyết định được ghi vào `data/results/self_heal_log.json`. | Lần chạy thật: phát hiện 5 lỗi (4 expectation + freshness 0.4545) → `rollback_to_raw_snapshot` → 8/8 pass, 24 dòng |
+| **B3 – Automated Test Suite** | 58 test pytest trong `tests/`, chạy cô lập trên project tạm (không động vào `data/` thật), LLM mock, không tốn API: ingestion (retry 429/503, fallback offline, parse, cleaning), GX + freshness, report + dashboard, test set / corruption / Chroma / QA multi-hop / metrics, pipeline end-to-end + idempotency, self-heal (3 nhánh), config + 7 LLM provider, agent tools. CI: `.github/workflows/tests.yml` chạy trên mỗi push/PR với `--cov-fail-under=80`. One-click: `./script/run_tests.sh`. | 58 passed, coverage **97.6%** |
+
+## 13. Giới hạn và hướng cải thiện
 
 | Giới hạn hiện tại | Ảnh hưởng   | Hướng cải thiện có thể kiểm chứng |
 | --------------------- | -------------- | ----------------------------------------- |
@@ -242,7 +252,7 @@ Inject noise và truncate title có trong dữ liệu corrupted, nhưng không l
 | Quality Gate không bắt được inject noise; test set không phủ bài bị noise/truncate | Nhiễu văn bản lọt vào index | Thêm expectation tỉ lệ ký tự non-alphanumeric / regex token rác, kiểm tra fail trên `papers_clean_corrupted` |
 | Dữ liệu là snapshot 24 bài | Kết quả chưa phản ánh dữ liệu live | Chạy `REFRESH_SOURCE=1` và so sánh freshness report |
 
-## 13. Checklist trước khi nộp
+## 14. Checklist trước khi nộp
 
 - [x] Thông tin nhóm và repository chính xác.
 - [x] Phân công khớp với module, artifact và kết quả thực tế.
