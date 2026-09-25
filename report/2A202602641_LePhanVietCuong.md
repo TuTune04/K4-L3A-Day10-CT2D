@@ -21,6 +21,7 @@
 | Test set | `src/evaluation/testset.py` – `build_test_set`, `load_or_create_test_set` | DataFrame sạch | `data/eval/test_set.json` (10 câu, 5 dạng) | Hoàn thành |
 | Retrieval smoke test & multi-hop QA | `src/retrieval/index.py` – `build_from_clean`, `semantic_search`; `src/retrieval/qa.py` | `papers_clean.json`, câu hỏi | Chroma collection, `AnswerResult` | Hoàn thành |
 | Corruption | `src/ingestion/corruption.py` – `corrupt_clean_dataframe` | DataFrame sạch | DataFrame corrupted, `data/results/corruption_log.json` | Hoàn thành |
+| Bonus B3 – test evaluation/retrieval | `tests/test_evaluation_retrieval.py` (13 test: test set, corruption, Chroma, QA, metrics) | DataFrame sạch | pytest pass | Hoàn thành |
 
 ### Việc hỗ trợ ngoài phạm vi chính
 
