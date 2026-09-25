@@ -41,6 +41,8 @@ class Paths:
     repaired_metrics: Path
     repaired_answers: Path
     comparison_report: Path
+    self_heal_log: Path
+    dashboard_html: Path
 
 
 @dataclass(frozen=True)
@@ -112,6 +114,8 @@ def load_settings(project_dir: Path | None = None) -> Settings:
         repaired_metrics=data_dir / "results" / "repaired_metrics.json",
         repaired_answers=data_dir / "results" / "repaired_answers.json",
         comparison_report=data_dir / "reports" / "corruption_report.md",
+        self_heal_log=data_dir / "results" / "self_heal_log.json",
+        dashboard_html=data_dir / "reports" / "dashboard.html",
     )
 
     return Settings(
