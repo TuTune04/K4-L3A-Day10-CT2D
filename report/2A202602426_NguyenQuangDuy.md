@@ -58,18 +58,20 @@ _(Tự viết bằng lời của bạn.)_
 | Input                          | DataFrame có `paper_id, title, summary, text_for_embedding, age_days, published`; dict metrics/quality/freshness |
 | Output                         | Dict kết quả `{success, statistics, failed_expectations, results}`; payload freshness; 2 file Markdown |
 | Module phụ thuộc             | `great_expectations` 1.x, `core/utils.py` |
-| Module sử dụng output        | `pipelines/phase1.py` (gate), `pipelines/corruption_flow.py` |
+| Module sử dụng output        | `pipelines/phase1.py` (gate), `pipelines/self_heal.py` (phát hiện lỗi để kích hoạt repair), `pipelines/corruption_flow.py` |
 | Điều kiện lỗi cần xử lý | Cột list không hash được khi kiểm tra unique (chỉ đưa cột scalar vào GX); DataFrame rỗng; metric thiếu |
 
 ### Cách xác minh
 
 ```bash
+pytest tests/test_observability.py
+python script/build_dashboard.py
 python -c "from core.config import load_settings; from observability.quality import run_data_quality_checks; import pandas as pd; s=load_settings(); df=pd.read_json(s.paths.clean_json); res=run_data_quality_checks(df, s, 'test'); print(f'Quality check status = {res[\"success\"]}')"
 ```
 
 - **Kết quả mong đợi:** `Quality check status = True` trên dữ liệu sạch; fail trên dữ liệu corrupted.
-- **Kết quả thực tế:** Baseline 8/8 pass; corrupted fail 4 (`unique[paper_id]`, `lengths[title]`, `lengths[summary]`, `between[age_days]`); freshness 0.0417 → 0.4545 → 0.0417.
-- **Artifact/log:** `data/quality/`, `data/reports/corruption_report.md`
+- **Kết quả thực tế:** `tests/test_observability.py` 10 passed; dashboard sinh ra `data/reports/dashboard.html`; Baseline 8/8 pass; corrupted fail 4 (`unique[paper_id]`, `lengths[title]`, `lengths[summary]`, `between[age_days]`); freshness 0.0417 → 0.4545 → 0.0417.
+- **Artifact/log:** `data/quality/`, `data/reports/corruption_report.md`, `data/reports/dashboard.html`
 
 ## 5. Một quyết định kỹ thuật quan trọng
 
