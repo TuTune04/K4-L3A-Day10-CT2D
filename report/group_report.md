@@ -6,25 +6,25 @@
 | ------------------ | -------------------------- |
 | Khóa/Lớp         | K4 – L3                    |
 | Tên nhóm         | CT2D                       |
-| Repository         | `K4-L3A-Day10-CT2D`        |
+| Repository         | https://github.com/TuTune04/K4-L3A-Day10-CT2D |
 | Ngày hoàn thành | 2026-09-25                 |
 
 ### Thành viên và phân công
 
 | STT | Họ và tên | MSSV | Vai trò chính | Module/deliverable sở hữu |
 | --: | --- | --- | --- | --- |
-| 1 | Đinh Công Tú | 2A202602479 | Trưởng nhóm / Pipeline Integrator | `src/pipelines/phase1.py`, `src/pipelines/corruption_flow.py`, artifacts `data/`, báo cáo nhóm |
-| 2 | Vi Hùng Đức | 2A202602512 | Ingestion & Cleaning | `src/ingestion/crossref.py`, `src/ingestion/cleaning.py`, `data/raw/` |
-| 3 | Lê Phan Việt Cường | 2A202602641 | Evaluation & Corruption | `src/evaluation/testset.py`, `src/ingestion/corruption.py`, `data/eval/test_set.json` |
-| 4 | Nguyễn Quang Duy | 2A202602426 | Observability & Reporting | `src/observability/quality.py`, `src/observability/reporting.py`, `data/quality/`, `data/reports/` |
+| 1 | Đinh Công Tú | 2A202602479 | Trưởng nhóm / Pipeline Integrator | `src/core/config.py`, `src/pipelines/phase1.py`, `src/pipelines/corruption_flow.py`, `src/pipelines/self_heal.py` (B2), CI + `tests/test_pipelines.py` (B3), artifacts `data/`, báo cáo nhóm |
+| 2 | Vi Hùng Đức | 2A202602512 | Ingestion & Cleaning | `src/ingestion/crossref.py`, `src/ingestion/cleaning.py`, `data/raw/`, `tests/test_ingestion.py` |
+| 3 | Lê Phan Việt Cường | 2A202602641 | Evaluation, Retrieval & Corruption | `src/evaluation/testset.py`, `src/retrieval/index.py`, `src/retrieval/qa.py`, `src/ingestion/corruption.py`, `data/eval/test_set.json`, `tests/test_evaluation_retrieval.py` |
+| 4 | Nguyễn Quang Duy | 2A202602426 | Observability & Reporting | `src/observability/quality.py`, `src/observability/reporting.py`, `src/observability/dashboard.py` (B1), `data/quality/`, `data/reports/`, `tests/test_observability.py` |
 
 ## 2. Tóm tắt kết quả
 
-Nhóm đã hoàn thành đầy đủ 7 tầng của pipeline: ingestion Crossref (chế độ offline snapshot, có live mode với retry), cleaning, Quality Gate bằng Great Expectations 1.23.1, index ChromaDB với `all-MiniLM-L6-v2`, evaluation baseline, bộ 6 kịch bản corruption và idempotent repair. Baseline tạo đủ artifact: 2 file raw, `papers_clean.csv/json` (24 dòng), collection `papers-baseline`, `test_set.json` (10 câu), `baseline_metrics.json` và `phase1_report.md`. Trên dữ liệu sạch, Hit Rate và Token F1 đều đạt 1.0.
+Nhóm đã hoàn thành đầy đủ 7 tầng của pipeline: ingestion Crossref (chế độ offline snapshot, có live mode với retry), cleaning, Quality Gate bằng Great Expectations 1.23.1, index ChromaDB với `all-MiniLM-L6-v2`, evaluation baseline, bộ 6 kịch bản corruption và cơ chế self-healing (tự phát hiện lỗi rồi repair idempotent từ raw). Baseline tạo đủ artifact: 2 file raw, `papers_clean.csv/json` (24 dòng), collection `papers-baseline`, `test_set.json` (10 câu), `baseline_metrics.json` và `phase1_report.md`. Trên dữ liệu sạch, Hit Rate và Token F1 đều đạt 1.0.
 
-Sau khi tiêm lỗi, Hit Rate giảm từ 1.0 xuống 0.8, Token F1 từ 1.0 xuống 0.6979, LLM Judge Accuracy (gpt-4o-mini) từ 1.0 xuống 0.6, và Quality Gate fail 4/8 expectation. Lỗi nguy hiểm nhất là **stale date**: câu eval_008 vẫn truy xuất đúng bài (hit = true) nhưng trả lời sai năm (`2021-05-20` thay vì `2026-05-20`). Đây là silent failure điển hình, retrieval "đúng" mà câu trả lời vẫn sai. **Drop latest records** gây nhiều thiệt hại nhất: 4/10 câu bị giảm điểm (eval_001, eval_002 mất tài liệu đúng; 2 câu multi-hop mất bài thứ 2 trong cặp nên trả lời thừa lĩnh vực). RAG vẫn trả lời mọi câu mà không báo lỗi. Chỉ Quality Gate và Freshness SLA (stale ratio 0.4545 > 0.25) phát hiện ra vấn đề. Repair tái tạo dữ liệu từ raw snapshot và phục hồi 100% các chỉ số. Chạy repair 2 lần cho ra file giống hệt nhau từng byte.
+Sau khi tiêm lỗi, Hit Rate giảm từ 1.0 xuống 0.8, Token F1 từ 1.0 xuống 0.6979, LLM Judge Accuracy (gpt-4o-mini) từ 1.0 xuống 0.6, và Quality Gate fail 4/8 expectation. Lỗi nguy hiểm nhất là **stale date**: câu eval_008 vẫn truy xuất đúng bài (hit = true) nhưng trả lời sai năm (`2021-05-20` thay vì `2026-05-20`). Đây là silent failure điển hình, retrieval "đúng" mà câu trả lời vẫn sai. **Drop latest records** gây nhiều thiệt hại nhất: 4/10 câu bị giảm điểm (eval_001, eval_002 mất tài liệu đúng; 2 câu multi-hop mất bài thứ 2 trong cặp nên trả lời thừa lĩnh vực). RAG vẫn trả lời mọi câu mà không báo lỗi. Chỉ Quality Gate và Freshness SLA (stale ratio 0.4545 > 0.25) phát hiện ra vấn đề. Self-healing được kích hoạt tự động bởi chính các tín hiệu này: rollback về raw snapshot, và phục hồi 100% các chỉ số. Chạy repair 2 lần cho ra file giống hệt nhau từng byte.
 
-Giới hạn còn lại: Ragas không được chạy (cần `RUN_RAGAS=1`), và dữ liệu là snapshot offline 24 bài.
+Nhóm làm cả 3 phần bonus: dashboard HTML theo dõi quality/drift (B1), self-healing tự động (B2), và 58 test pytest với coverage 97.6% chạy trên GitHub Actions (B3). Giới hạn còn lại: Ragas không được chạy (cần `RUN_RAGAS=1`), và dữ liệu là snapshot offline 24 bài.
 
 ## 3. Kiến trúc và luồng dữ liệu
 
@@ -39,8 +39,9 @@ Crossref API (REFRESH_SOURCE=1) hoặc snapshot data/raw/crossref_response.json
     -> test_set.json -> evaluate -> baseline_metrics.json      (testset.py, metrics.py)
     -> phase1_report.md                                        (reporting.py)
     -> corruption 6 lỗi -> `papers-corrupted` -> evaluate      (corruption.py)
-    -> repair: clean lại từ raw -> `papers-repaired` -> evaluate
-    -> corruption_report.md (Baseline vs Corrupted vs Repaired)
+    -> detect: Quality Gate + Freshness fail                   (self_heal.assess_health)
+    -> self-heal: rollback về raw -> `papers-repaired` -> evaluate  (self_heal.self_heal)
+    -> corruption_report.md + dashboard.html                   (reporting.py, dashboard.py)
 ```
 
 ### Trách nhiệm của từng khối
@@ -49,11 +50,13 @@ Crossref API (REFRESH_SOURCE=1) hoặc snapshot data/raw/crossref_response.json
 | ----------------- | -------------- | -------------------------- | ------------------------ | -------------- |
 | Ingestion         | Crossref `/works` hoặc snapshot | Retry 429/5xx, parse, bỏ record thiếu DOI/title/abstract | `data/raw/*.json` | Vi Hùng Đức |
 | Cleaning          | `PaperRecord` list | Strip JATS, normalize, `age_days`, dedup, `text_for_embedding` | `data/clean/papers_clean.*` | Vi Hùng Đức |
-| Embedding/index   | Clean DataFrame | MiniLM + Chroma cosine, 3 collection tách biệt | `data/chroma/`, `data/embeddings/` | Code starter, Lê Phan Việt Cường kiểm thử |
-| Evaluation        | Clean DataFrame | 10 câu × 4 dạng, Hit Rate / Token F1 / Judge | `data/eval/`, `data/results/` | Lê Phan Việt Cường |
+| Embedding/index   | Clean DataFrame | MiniLM + Chroma cosine, 3 collection tách biệt; `build_from_clean`/`semantic_search`, manifest đường dẫn tương đối; QA multi-hop | `data/chroma/`, `data/embeddings/` | Lê Phan Việt Cường (mở rộng từ code starter) |
+| Evaluation        | Clean DataFrame | 10 câu × 5 dạng (có multi_hop), Hit Rate / Token F1 / LLM Judge | `data/eval/`, `data/results/` | Lê Phan Việt Cường |
 | Observability     | Clean/corrupted DataFrame | 8 expectation GX 1.x, Freshness SLA | `data/quality/` | Nguyễn Quang Duy |
-| Corruption/repair | Clean DataFrame / raw records | 6 lỗi seed 42; repair từ raw | `data/results/corruption_log.json`, `papers_clean_repaired.*` | Lê Phan Việt Cường / Đinh Công Tú |
+| Corruption        | Clean DataFrame | 6 lỗi seed 42 + log | `data/results/corruption_log.json`, `papers_clean_corrupted.*` | Lê Phan Việt Cường |
+| Self-healing      | Dataset + tín hiệu quality/freshness | Phát hiện → rollback raw → (re-fetch) → kiểm định lại | `data/results/self_heal_log.json`, `papers_clean_repaired.*` | Đinh Công Tú |
 | Orchestration     | Tất cả module | Thứ tự chạy, gate, so sánh | `data/reports/*.md` | Đinh Công Tú |
+| Dashboard         | Artifact trong `data/` | Tile trạng thái, cảnh báo drift, biểu đồ | `data/reports/dashboard.html` | Nguyễn Quang Duy |
 
 ## 4. Cách tái hiện kết quả
 
@@ -203,7 +206,7 @@ Câu **multi_hop** hỏi lĩnh vực chung của 2 bài thuộc 2 chủ đề kh
 | inject_noise | Chèn token rác, xáo ký tự | 3 | Khó bắt bằng rule | GX không bắt trực tiếp. Trúng bài của eval_005/eval_009 nhưng 2 câu này hỏi categories nên metric không đổi | Clean lại từ raw |
 | truncate_title | Cắt title còn 7 ký tự | 3 | Độ dài title fail | GX title fail (4 dòng, tính cả 1 dòng duplicate); không trúng bài nào trong test set | Clean lại từ raw |
 | stale_date | `published` lùi 5 năm | 7 | Freshness fail | stale ratio 0.4545, GX `age_days` fail; eval_008 hit đúng nhưng trả lời `2021-05-20` (F1 0) | Clean lại từ raw |
-| duplicate_rows | Nhân đôi dòng | 3 | Unique fail | GX unique `paper_id` fail (6 dòng) | Dedup trong cleaning |
+| duplicate_rows | Nhân đôi dòng | 3 | Unique fail | GX unique `paper_id` fail (6 dòng) | Clean lại từ raw (cleaning có dedup) |
 
 Corruption log:
 
@@ -211,7 +214,7 @@ Corruption log:
 - Trạng thái: Có
 - Nhận xét: log ghi seed 42, số dòng trước/sau (24 → 22), loại lỗi, số dòng và danh sách `paper_id` bị ảnh hưởng cho từng loại.
 
-Repair không sửa trên bảng đã hỏng. Nó đọc lại `data/raw/crossref_records.json`, là bản raw được giữ nguyên, rồi chạy lại đúng hàm cleaning có tính xác định (deterministic), sau đó index vào collection mới `papers-repaired`. Dữ liệu vì vậy được khôi phục từ nguồn tin cậy chứ không phải che lỗi. Kết quả đã được xác minh: `papers_clean_repaired.json` giống hệt baseline về `paper_id` và `text_for_embedding`, và 2 lần chạy repair cho ra file giống nhau từng byte.
+Repair do `self_heal()` tự kích hoạt khi dữ liệu corrupted không qua Quality Gate hoặc Freshness SLA (lần chạy này có 5 lý do). Nó không sửa trên bảng đã hỏng, mà đọc lại `data/raw/crossref_records.json`, là bản raw được giữ nguyên, rồi chạy lại đúng hàm cleaning có tính xác định (deterministic), sau đó index vào collection mới `papers-repaired`. Dữ liệu vì vậy được khôi phục từ nguồn tin cậy chứ không phải che lỗi. Kết quả đã được xác minh: `papers_clean_repaired.json` giống hệt baseline về `paper_id` và `text_for_embedding`, và 2 lần chạy repair cho ra file giống nhau từng byte (có test tự động `test_phase1_then_corruption_flow_end_to_end` kiểm chứng).
 
 ## 10. So sánh baseline, corrupted và repaired
 
