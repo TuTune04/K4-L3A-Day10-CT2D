@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-09-25T08:23:13.859051+00:00",
+  "generated_at": "2026-09-25T08:35:52.443519+00:00",
   "threshold_days": 180,
   "max_stale_ratio": 0.25,
   "total_rows": 22,
   "latest_published": "2026-06-12",
-  "oldest_published": "2025-04-18",
+  "oldest_published": "2021-04-18",
   "min_age_days": 105,
-  "max_age_days": 525,
+  "max_age_days": 1986,
   "stale_rows": 10,
   "stale_ratio": 0.4545,
   "stale_paper_ids": [

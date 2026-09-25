@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-25T08:23:13.770641+00:00",
+  "generated_at": "2026-09-25T08:35:52.363982+00:00",
   "seed": 42,
   "rows_before": 24,
   "rows_after": 22,
@@ -28,7 +28,7 @@
     },
     {
       "corruption": "inject_noise",
-      "description": "Garbage tokens and shuffled characters injected into the summary.",
+      "description": "Garbage tokens and shuffled characters injected into the summary (propagates to text_for_embedding).",
       "affected_rows": 3,
       "paper_ids": [
         "10.1145/3637528.3671816",
@@ -48,7 +48,7 @@
     },
     {
       "corruption": "stale_date",
-      "description": "Published date shifted back 365 days (35% of rows).",
+      "description": "Published date shifted back 5 years (35% of rows).",
       "affected_rows": 7,
       "paper_ids": [
         "10.1145/3637528.3671823",

@@ -36,16 +36,16 @@
       "Algorithms"
     ],
     "primary_category": "Information Retrieval",
-    "published": "2025-06-11",
+    "published": "2021-06-11",
     "updated": "2026-06-11",
-    "age_days": 471,
+    "age_days": 1932,
     "authors_joined": "Dat Tran, Lan Pham",
     "categories_joined": "Information Retrieval, Algorithms",
     "summary_chars": 268,
     "abs_url": "https://doi.org/10.1145/3637528.3671823",
     "pdf_url": "https://doi.org/10.1145/3637528.3671823",
     "comment": "Crossref record 10.1145/3637528.3671823",
-    "text_for_embedding": "Title: Advanced Perspectives on Hybrid Search Architectures: Combining BM25 with Dense Representations\nAuthors: Dat Tran, Lan Pham\nPublished: 2025-06-11\nCategories: Information Retrieval, Algorithms\nSummary: An extended empirical study on ense vector search excels at conceptual similarity but struggles with exact acronyms and serial numbers. Reciprocal Rank Fusion of sparse lexical scores and dense embeddings achieves optimal recall Further analysis on scaling parameters."
+    "text_for_embedding": "Title: Advanced Perspectives on Hybrid Search Architectures: Combining BM25 with Dense Representations\nAuthors: Dat Tran, Lan Pham\nPublished: 2021-06-11\nCategories: Information Retrieval, Algorithms\nSummary: An extended empirical study on ense vector search excels at conceptual similarity but struggles with exact acronyms and serial numbers. Reciprocal Rank Fusion of sparse lexical scores and dense embeddings achieves optimal recall Further analysis on scaling parameters."
   },
   {
     "paper_id": "10.1145/3637528.3671822",
@@ -84,16 +84,16 @@
       "Natural Language Processing"
     ],
     "primary_category": "Information Retrieval",
-    "published": "2025-06-09",
+    "published": "2021-06-09",
     "updated": "2026-06-09",
-    "age_days": 473,
+    "age_days": 1934,
     "authors_joined": "Long Trinh, Ha Chu",
     "categories_joined": "Information Retrieval, Natural Language Processing",
     "summary_chars": 266,
     "abs_url": "https://doi.org/10.1145/3637528.3671821",
     "pdf_url": "https://doi.org/10.1145/3637528.3671821",
     "comment": "Crossref record 10.1145/3637528.3671821",
-    "text_for_embedding": "Title: Advanced Perspectives on Chunking Strategies for Technical Documentation Retrieval\nAuthors: Long Trinh, Ha Chu\nPublished: 2025-06-09\nCategories: Information Retrieval, Natural Language Processing\nSummary: An extended empirical study on ierarchical and semantic boundary chunking preserves code block contexts and markdown headings. Our benchmark demonstrates superior top-1 recall compared to fixed character length sliding windows Further analysis on scaling parameters."
+    "text_for_embedding": "Title: Advanced Perspectives on Chunking Strategies for Technical Documentation Retrieval\nAuthors: Long Trinh, Ha Chu\nPublished: 2021-06-09\nCategories: Information Retrieval, Natural Language Processing\nSummary: An extended empirical study on ierarchical and semantic boundary chunking preserves code block contexts and markdown headings. Our benchmark demonstrates superior top-1 recall compared to fixed character length sliding windows Further analysis on scaling parameters."
   },
   {
     "paper_id": "10.1145/3637528.3671810",
@@ -108,16 +108,16 @@
       "DevOps"
     ],
     "primary_category": "Data Quality",
-    "published": "2025-06-08",
+    "published": "2021-06-08",
     "updated": "2026-06-08",
-    "age_days": 474,
+    "age_days": 1935,
     "authors_joined": "Son Nguyen, Thuy Doan",
     "categories_joined": "Data Quality, DevOps",
     "summary_chars": 0,
     "abs_url": "https://doi.org/10.1145/3637528.3671810",
     "pdf_url": "https://doi.org/10.1145/3637528.3671810",
     "comment": "Crossref record 10.1145/3637528.3671810",
-    "text_for_embedding": "Title: Automated Data Quality Profiling with Great Expectations in CI/CD\nAuthors: Son Nguyen, Thuy Doan\nPublished: 2025-06-08\nCategories: Data Quality, DevOps\nSummary: "
+    "text_for_embedding": "Title: Automated Data Quality Profiling with Great Expectations in CI/CD\nAuthors: Son Nguyen, Thuy Doan\nPublished: 2021-06-08\nCategories: Data Quality, DevOps\nSummary: "
   },
   {
     "paper_id": "10.1145/3637528.3671820",
@@ -228,16 +228,16 @@
       "Artificial Intelligence"
     ],
     "primary_category": "Data Management",
-    "published": "2025-06-04",
+    "published": "2021-06-04",
     "updated": "2026-06-04",
-    "age_days": 478,
+    "age_days": 1939,
     "authors_joined": "Bao Do, Linh Ngo",
     "categories_joined": "Data Management, Artificial Intelligence",
     "summary_chars": 345,
     "abs_url": "https://doi.org/10.1145/3637528.3671816",
     "pdf_url": "https://doi.org/10.1145/3637528.3671816",
     "comment": "Crossref record 10.1145/3637528.3671816",
-    "text_for_embedding": "Title: Advanced Perspectives on Freshness SLAs for Real-Time LLM Knowledge Augmentation\nAuthors: Bao Do, Linh Ngo\nPublished: 2025-06-04\nCategories: Data Management, Artificial Intelligence\nSummary: An extended ||| empirical tdsuy ||| on e ~~% define freshness #@! service-level agreements \u00bf\u00bf (SLAs) for ||| temporal otuecmdn ||| ngt.ioinse By \u00bf\u00bf ncktagri document ~~% age and ||| update edn,acec \u00bf\u00bf our orchestrator &&* dynamically prioritizes ||| recrawling high-churn ||| technical caproro &&* Further nssialya ||| on scaling &&* .aareprmest"
+    "text_for_embedding": "Title: Advanced Perspectives on Freshness SLAs for Real-Time LLM Knowledge Augmentation\nAuthors: Bao Do, Linh Ngo\nPublished: 2021-06-04\nCategories: Data Management, Artificial Intelligence\nSummary: An extended ||| empirical tdsuy ||| on e ~~% define freshness #@! service-level agreements \u00bf\u00bf (SLAs) for ||| temporal otuecmdn ||| ngt.ioinse By \u00bf\u00bf ncktagri document ~~% age and ||| update edn,acec \u00bf\u00bf our orchestrator &&* dynamically prioritizes ||| recrawling high-churn ||| technical caproro &&* Further nssialya ||| on scaling &&* .aareprmest"
   },
   {
     "paper_id": "10.1145/3637528.3671815",
@@ -324,16 +324,16 @@
       "Information Retrieval"
     ],
     "primary_category": "Artificial Intelligence",
-    "published": "2025-05-20",
+    "published": "2021-05-20",
     "updated": "2026-05-20",
-    "age_days": 493,
+    "age_days": 1954,
     "authors_joined": "Minh Nguyen, Hoang Le",
     "categories_joined": "Artificial Intelligence, Information Retrieval",
     "summary_chars": 0,
     "abs_url": "https://doi.org/10.1145/3637528.3671801",
     "pdf_url": "https://doi.org/10.1145/3637528.3671801",
     "comment": "Crossref record 10.1145/3637528.3671801",
-    "text_for_embedding": "Title: Agentic Retrieval-Augmented Generation for Knowledge-Intensive Tasks\nAuthors: Minh Nguyen, Hoang Le\nPublished: 2025-05-20\nCategories: Artificial Intelligence, Information Retrieval\nSummary: "
+    "text_for_embedding": "Title: Agentic Retrieval-Augmented Generation for Knowledge-Intensive Tasks\nAuthors: Minh Nguyen, Hoang Le\nPublished: 2021-05-20\nCategories: Artificial Intelligence, Information Retrieval\nSummary: "
   },
   {
     "paper_id": "10.1145/3637528.3671811",
@@ -372,16 +372,16 @@
       "Information Systems"
     ],
     "primary_category": "Databases",
-    "published": "2025-05-02",
+    "published": "2021-05-02",
     "updated": "2026-05-02",
-    "age_days": 511,
+    "age_days": 1972,
     "authors_joined": "Huy Dinh, Trang Vo",
     "categories_joined": "Databases, Information Systems",
     "summary_chars": 251,
     "abs_url": "https://doi.org/10.1145/3637528.3671806",
     "pdf_url": "https://doi.org/10.1145/3637528.3671806",
     "comment": "Crossref record 10.1145/3637528.3671806",
-    "text_for_embedding": "Title: Semantic Layer Integration for Agentic Text-to-SQL Pipelines\nAuthors: Huy Dinh, Trang Vo\nPublished: 2025-05-02\nCategories: Databases, Information Systems\nSummary: Connecting LMsL ~~% directly to \ufffd\ufffd raw shaoerewu ~~% lsbeta foten #@! results in ~~% mhaecs misunderstandings. #@! A governed &&* semantic layer \u00bf\u00bf isdzaetrdnas iesssnbu #@! metric definitions, ~~% dramatically boosting \u00bf\u00bf SQL generation ||| accuracy."
+    "text_for_embedding": "Title: Semantic Layer Integration for Agentic Text-to-SQL Pipelines\nAuthors: Huy Dinh, Trang Vo\nPublished: 2021-05-02\nCategories: Databases, Information Systems\nSummary: Connecting LMsL ~~% directly to \ufffd\ufffd raw shaoerewu ~~% lsbeta foten #@! results in ~~% mhaecs misunderstandings. #@! A governed &&* semantic layer \u00bf\u00bf isdzaetrdnas iesssnbu #@! metric definitions, ~~% dramatically boosting \u00bf\u00bf SQL generation ||| accuracy."
   },
   {
     "paper_id": "10.1145/3637528.3671809",
@@ -420,16 +420,16 @@
       "Information Systems"
     ],
     "primary_category": "Databases",
-    "published": "2025-04-18",
+    "published": "2021-04-18",
     "updated": "2026-04-18",
-    "age_days": 525,
+    "age_days": 1986,
     "authors_joined": "Duc Vu, Thao Dang",
     "categories_joined": "Databases, Information Systems",
     "summary_chars": 215,
     "abs_url": "https://doi.org/10.1145/3637528.3671803",
     "pdf_url": "https://doi.org/10.1145/3637528.3671803",
     "comment": "Crossref record 10.1145/3637528.3671803",
-    "text_for_embedding": "Title: Mitigat\nAuthors: Duc Vu, Thao Dang\nPublished: 2025-04-18\nCategories: Databases, Information Systems\nSummary: Soft-deletions in vector databases leave orphaned embeddings that lead to hallucinations. This paper designs an idempotent index synchronization protocol that guarantees complete purges of outdated vector artifacts."
+    "text_for_embedding": "Title: Mitigat\nAuthors: Duc Vu, Thao Dang\nPublished: 2021-04-18\nCategories: Databases, Information Systems\nSummary: Soft-deletions in vector databases leave orphaned embeddings that lead to hallucinations. This paper designs an idempotent index synchronization protocol that guarantees complete purges of outdated vector artifacts."
   },
   {
     "paper_id": "10.1145/3637528.3671805",
@@ -468,16 +468,16 @@
       "DevOps"
     ],
     "primary_category": "Data Quality",
-    "published": "2025-06-08",
+    "published": "2021-06-08",
     "updated": "2026-06-08",
-    "age_days": 474,
+    "age_days": 1935,
     "authors_joined": "Son Nguyen, Thuy Doan",
     "categories_joined": "Data Quality, DevOps",
     "summary_chars": 0,
     "abs_url": "https://doi.org/10.1145/3637528.3671810",
     "pdf_url": "https://doi.org/10.1145/3637528.3671810",
     "comment": "Crossref record 10.1145/3637528.3671810",
-    "text_for_embedding": "Title: Automated Data Quality Profiling with Great Expectations in CI/CD\nAuthors: Son Nguyen, Thuy Doan\nPublished: 2025-06-08\nCategories: Data Quality, DevOps\nSummary: "
+    "text_for_embedding": "Title: Automated Data Quality Profiling with Great Expectations in CI/CD\nAuthors: Son Nguyen, Thuy Doan\nPublished: 2021-06-08\nCategories: Data Quality, DevOps\nSummary: "
   },
   {
     "paper_id": "10.1145/3637528.3671817",
@@ -516,15 +516,15 @@
       "Information Systems"
     ],
     "primary_category": "Databases",
-    "published": "2025-04-18",
+    "published": "2021-04-18",
     "updated": "2026-04-18",
-    "age_days": 525,
+    "age_days": 1986,
     "authors_joined": "Duc Vu, Thao Dang",
     "categories_joined": "Databases, Information Systems",
     "summary_chars": 215,
     "abs_url": "https://doi.org/10.1145/3637528.3671803",
     "pdf_url": "https://doi.org/10.1145/3637528.3671803",
     "comment": "Crossref record 10.1145/3637528.3671803",
-    "text_for_embedding": "Title: Mitigat\nAuthors: Duc Vu, Thao Dang\nPublished: 2025-04-18\nCategories: Databases, Information Systems\nSummary: Soft-deletions in vector databases leave orphaned embeddings that lead to hallucinations. This paper designs an idempotent index synchronization protocol that guarantees complete purges of outdated vector artifacts."
+    "text_for_embedding": "Title: Mitigat\nAuthors: Duc Vu, Thao Dang\nPublished: 2021-04-18\nCategories: Databases, Information Systems\nSummary: Soft-deletions in vector databases leave orphaned embeddings that lead to hallucinations. This paper designs an idempotent index synchronization protocol that guarantees complete purges of outdated vector artifacts."
   }
 ]

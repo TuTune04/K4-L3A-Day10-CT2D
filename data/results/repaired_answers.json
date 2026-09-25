@@ -288,7 +288,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer correctly identifies 'Evaluation Methodology' as a common category between the two papers, which matches the reference answer."
+      "reasoning": "The model answer correctly identifies 'Evaluation Methodology' as a common category between the two papers, matching the reference answer exactly."
     }
   }
 ]

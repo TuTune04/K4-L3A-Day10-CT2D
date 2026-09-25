@@ -1,6 +1,6 @@
 {
   "name": "papers_corrupted_suite",
-  "id": "162a507e-e8d6-415f-aec2-c5dc755668d9",
+  "id": "c877b973-1070-4c17-a6b6-19d48ca7de05",
   "expectations": [
     {
       "type": "expect_table_row_count_to_be_between",
@@ -9,7 +9,7 @@
         "max_value": 5000
       },
       "meta": {},
-      "id": "ffb7732b-011e-44a4-a8e4-667039b61e31",
+      "id": "6ff4f53c-d130-4ff3-b6ba-8498b98f9d5c",
       "severity": "critical"
     },
     {
@@ -18,7 +18,7 @@
         "column": "paper_id"
       },
       "meta": {},
-      "id": "5cd6bc87-ab2b-430e-82cc-ea206cfa9c52",
+      "id": "82552f5c-f2a5-4cfd-8248-106559ad58b1",
       "severity": "critical"
     },
     {
@@ -27,7 +27,7 @@
         "column": "title"
       },
       "meta": {},
-      "id": "7a1c8c5b-0ee0-47ea-9086-e1400941cceb",
+      "id": "eb2cdf2f-78b4-439a-b17a-db8e85e137ec",
       "severity": "critical"
     },
     {
@@ -36,7 +36,7 @@
         "column": "text_for_embedding"
       },
       "meta": {},
-      "id": "59f1382b-7b1b-4f12-9248-a3a1c7ddfdf9",
+      "id": "3a45e40f-e7fb-4649-9841-ed1df8d13218",
       "severity": "critical"
     },
     {
@@ -45,7 +45,7 @@
         "column": "paper_id"
       },
       "meta": {},
-      "id": "0ca89328-ace3-4b4f-a05f-6ea1a119200e",
+      "id": "5cf4f7b3-5e4c-46b3-841d-b6f52f914d0a",
       "severity": "critical"
     },
     {
@@ -55,7 +55,7 @@
         "min_value": 30
       },
       "meta": {},
-      "id": "79283c08-2ab5-4fca-b16c-4e09b09f2dde",
+      "id": "18020261-c939-43e8-b33a-bddff41fe283",
       "severity": "critical"
     },
     {
@@ -65,7 +65,7 @@
         "min_value": 8
       },
       "meta": {},
-      "id": "bc6d53fb-233e-49f9-9a7d-cf4e1a27c57f",
+      "id": "efbcf37b-811e-47d6-be40-76ac2bd67ad2",
       "severity": "critical"
     },
     {
@@ -77,7 +77,7 @@
         "max_value": 180.0
       },
       "meta": {},
-      "id": "9d72ddf1-d150-4427-aac7-fffb5a4ee303",
+      "id": "888f0609-cff2-4062-a981-c77f79e2ffe7",
       "severity": "critical"
     }
   ],
