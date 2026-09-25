@@ -16,7 +16,7 @@ NOISE_ROWS = 3
 TRUNCATE_TITLE_ROWS = 3
 TRUNCATED_TITLE_CHARS = 7
 STALE_RATIO = 0.35
-STALE_SHIFT_DAYS = 365
+STALE_SHIFT_YEARS = 5
 DUPLICATE_ROWS = 3
 NOISE_TOKENS = ["#@!", "~~%", "¿¿", "0x7f", "&&*", "|||", "��"]
 
@@ -40,7 +40,7 @@ def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path) -> pd.DataFrame:
     """Tiem 6 dang loi du lieu vao ban sao cua clean dataframe va ghi corruption log.
 
     1. Drop 20% latest records   2. Blank summary        3. Inject noise vao summary
-    4. Truncate title (< 8 ky tu) 5. Lui published 365 ngay 6. Nhan ban dong
+    4. Truncate title (< 10 ky tu) 5. Lui published 5 nam  6. Nhan ban dong
     Sau cung rebuild `text_for_embedding` de index phan anh du lieu hong.
     """
     rng = random.Random(SEED)
@@ -69,17 +69,18 @@ def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path) -> pd.DataFrame:
 
     for idx in noise_idx:
         corrupted.at[idx, "summary"] = _inject_noise(corrupted.at[idx, "summary"], rng)
-    log("inject_noise", "Garbage tokens and shuffled characters injected into the summary.", corrupted.loc[noise_idx, "paper_id"].tolist())
+    log("inject_noise", "Garbage tokens and shuffled characters injected into the summary (propagates to text_for_embedding).", corrupted.loc[noise_idx, "paper_id"].tolist())
 
     corrupted.loc[title_idx, "title"] = corrupted.loc[title_idx, "title"].str[:TRUNCATED_TITLE_CHARS]
     log("truncate_title", f"Title truncated to {TRUNCATED_TITLE_CHARS} characters.", corrupted.loc[title_idx, "paper_id"].tolist())
 
     # 5. Stale date: lui ngay xuat ban de du lieu bi "moc".
     stale_idx = sorted(rng.sample(list(corrupted.index), math.ceil(len(corrupted) * STALE_RATIO)))
-    shifted = pd.to_datetime(corrupted.loc[stale_idx, "published"]) - pd.Timedelta(days=STALE_SHIFT_DAYS)
+    original = pd.to_datetime(corrupted.loc[stale_idx, "published"])
+    shifted = original - pd.DateOffset(years=STALE_SHIFT_YEARS)
     corrupted.loc[stale_idx, "published"] = shifted.dt.strftime("%Y-%m-%d")
-    corrupted.loc[stale_idx, "age_days"] = corrupted.loc[stale_idx, "age_days"] + STALE_SHIFT_DAYS
-    log("stale_date", f"Published date shifted back {STALE_SHIFT_DAYS} days ({STALE_RATIO:.0%} of rows).", corrupted.loc[stale_idx, "paper_id"].tolist())
+    corrupted.loc[stale_idx, "age_days"] = corrupted.loc[stale_idx, "age_days"] + (original - shifted).dt.days
+    log("stale_date", f"Published date shifted back {STALE_SHIFT_YEARS} years ({STALE_RATIO:.0%} of rows).", corrupted.loc[stale_idx, "paper_id"].tolist())
 
     # 6. Duplicate rows.
     dup_idx = sorted(rng.sample(list(corrupted.index), DUPLICATE_ROWS))
