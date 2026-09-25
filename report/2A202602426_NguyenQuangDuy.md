@@ -21,6 +21,7 @@
 | Quality Gate | `src/observability/quality.py` – `run_data_quality_checks` | DataFrame (sạch/corrupted/repaired) | `data/quality/<name>_quality_report.json`, `data/quality/gx/<name>_suite.json` | Hoàn thành |
 | Freshness SLA | `src/observability/quality.py` – `build_freshness_report` | DataFrame có `age_days`, `published` | `data/quality/freshness_report*.json` | Hoàn thành |
 | Reporting | `src/observability/reporting.py` – `generate_phase1_report`, `generate_corruption_report` | Metrics, quality, freshness, corruption log, answers | `data/reports/phase1_report.md`, `data/reports/corruption_report.md` | Hoàn thành |
+| Bonus B1 – Dashboard + test | `src/observability/dashboard.py`, `script/build_dashboard.py`, `tests/test_observability.py` (10 test) | Artifact trong `data/` | `data/reports/dashboard.html` | Hoàn thành |
 
 ### Việc hỗ trợ ngoài phạm vi chính
 
