@@ -1,6 +1,6 @@
 # Corruption Report - Baseline vs Corrupted vs Repaired
 
-_Generated at 2026-09-25T08:36:24.407375+00:00 by `script/run_corruption_flow.py`. All three states are evaluated on the same test set._
+_Generated at 2026-09-25T08:56:58.585546+00:00 by `script/run_corruption_flow.py`. All three states are evaluated on the same test set._
 
 ## 1. RAG Metrics (3 states)
 
@@ -67,4 +67,4 @@ Seed `42` - rows 24 -> 22.
 
 ## 6. Repair Strategy
 
-Repair does not patch the corrupted table. It re-runs the deterministic cleaning step from the preserved raw snapshot (`data/raw/crossref_records.json`) and rebuilds a fresh Chroma collection (`papers-repaired`). Because the input and transformation are both deterministic, running repair any number of times yields the same clean dataset (idempotent), with no manual edits.
+Repair is triggered automatically by `pipelines/self_heal.py` when the Quality Gate or the Freshness SLA fails (decisions logged in `data/results/self_heal_log.json`). It does not patch the corrupted table: it first rolls back to the preserved raw snapshot (`data/raw/crossref_records.json`) and re-runs the deterministic cleaning step, and only re-fetches from Crossref if the dataset is still unhealthy. The result is re-validated and indexed into a fresh Chroma collection (`papers-repaired`). Because input and transformation are deterministic, running repair any number of times yields the same clean dataset (idempotent), with no manual edits.

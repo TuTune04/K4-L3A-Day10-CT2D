@@ -227,7 +227,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer provides an incorrect publication date, as the reference answer states the paper was published in 2026, while the model states 2021."
+      "reasoning": "The model answer provides an incorrect publication date, which is significantly earlier than the reference answer."
     }
   },
   {

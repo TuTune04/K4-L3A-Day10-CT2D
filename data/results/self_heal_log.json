@@ -1,0 +1,35 @@
+{
+  "runs": [
+    {
+      "timestamp": "2026-09-25T08:56:47.128199+00:00",
+      "dataset": "corrupted",
+      "triggered": true,
+      "strategy": "rollback_to_raw_snapshot",
+      "healthy_before": false,
+      "healthy_after": true,
+      "rows_before": 22,
+      "rows_after": 24,
+      "events": [
+        {
+          "step": "detect",
+          "dataset": "corrupted",
+          "healthy": false,
+          "reasons": [
+            "quality:expect_column_values_to_be_unique[paper_id]",
+            "quality:expect_column_value_lengths_to_be_between[title]",
+            "quality:expect_column_value_lengths_to_be_between[summary]",
+            "quality:expect_column_values_to_be_between[age_days]",
+            "freshness:stale_ratio=0.4545"
+          ]
+        },
+        {
+          "step": "repair",
+          "strategy": "rollback_to_raw_snapshot",
+          "rows": 24,
+          "healthy": true,
+          "reasons": []
+        }
+      ]
+    }
+  ]
+}

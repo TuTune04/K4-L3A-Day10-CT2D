@@ -1,6 +1,6 @@
 # Phase 1 Report - Baseline Pipeline
 
-_Generated at 2026-09-25T08:33:33.309387+00:00 by `script/run_phase1.py`._
+_Generated at 2026-09-25T08:56:17.879047+00:00 by `script/run_phase1.py`._
 
 ## 1. Source & Lineage
 
